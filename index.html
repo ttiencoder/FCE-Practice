@@ -1,0 +1,224 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE FCE>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCE Practice Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #34495e;
+            padding: 1rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1.5rem;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #3498db;
+        }
+
+        .hero {
+            background: url('https://via.placeholder.com/1200x300/3498db/ffffff?text=FCE+Practice') no-repeat center/cover;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .section {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .exercise {
+            background-color: #ecf0f1;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .contact-form button {
+            background-color: #3498db;
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .contact-form button:hover {
+            background-color: #2980b9;
+        }
+
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>FCE Practice Hub</h1>
+        <p>Your one-stop resource for Cambridge B2 First preparation</p>
+    </header>
+    <nav>
+        <a href="#reading">Reading</a>
+        <a href="#writing">Writing</a>
+        <a href="#listening">Listening</a>
+        <a href="#speaking">Speaking</a>
+        <a href="#contact">Contact</a>
+    </nav>
+    <section class="hero">
+        <h1>Master the FCE Exam</h1>
+    </section>
+    <section id="reading" class="section">
+        <h2>Reading and Use of English</h2>
+        <p>Practice comprehension and grammar with sample exercises.</p>
+        <div class="exercise">
+            <h3>Sample Exercise: Multiple Choice</h3>
+            <p>Read the text and choose the correct answer...</p>
+            <p><a href="https://www.cambridgeenglish.org/exams-and-tests/first/preparation/" target="_blank">Try official practice tests</a></p>
+        </div>
+        <p><strong>Tip:</strong> Focus on skimming for main ideas and scanning for specific details.</p>
+    </section>
+    <section id="writing" class="section">
+        <h2>Writing</h2>
+        <p>Improve your essay and letter-writing skills.</p>
+        <div class="exercise">
+            <h3>Sample Task: Essay</h3>
+            <p>Write an essay discussing the advantages and disadvantages of online learning (150-180 words).</p>
+        </div>
+        <p><strong>Tip:</strong> Use a clear structure: introduction, main points, conclusion.</p>
+    </section>
+    <section id="listening" class="section">
+        <h2>Listening</h2>
+        <p>Enhance your listening skills with practice audio.</p>
+        <div class="exercise">
+            <h3>Sample Exercise: Multiple Choice</h3>
+            <p>Listen to a conversation and answer questions...</p>
+            <p><a href="https://www.cambridgeenglish.org/exams-and-tests/first/preparation/" target="_blank">Access audio resources</a></p>
+        </div>
+        <p><strong>Tip:</strong> Practice listening to different accents and note-taking.</p>
+    </section>
+    <section id="speaking" class="section">
+        <h2>Speaking</h2>
+        <p>Prepare for the speaking test with sample prompts.</p>
+        <div class="exercise">
+            <h3>Sample Task: Interview</h3>
+            <p>Talk about your hobbies for 1-2 minutes.</p>
+        </div>
+        <p><strong>Tip:</strong> Practice fluency and use linking words like "however" or "therefore."</p>
+    </section>
+    <section id="contact" class="section">
+        <h2>Contact Us</h2>
+        <form class="contact-form" onsubmit="alert('Form submitted! (This is a demo)'); return false;">
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+            <textarea placeholder="Your Message or FCE Questions" rows="5" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </section>
+    <footer>
+        <p>© 2025 FCE Practice Hub. All rights reserved.</p>
+    </footer>
+</body>
+</html>
